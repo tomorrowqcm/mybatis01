@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!--
+        加载顺序 : properties节点中property中的属性
+            外置的properties文件
+            dataSource中property的值
+            最后做的配置会生效
+    -->
+    <!--<properties resource="db.properties">
+           <property name="db.driver" value="com.mysql.jdbc.Driverxx"/>
+       </properties>-->
+
+    <typeAliases>
+        <!--
+            type  : 原来的名字
+            alias : 别名
+        -->
+        <!--<typeAlias type="com.qcm.pojo.User" alias="user"/>-->
+        <!--使用包扫描的方式指定别名,别名的规则就是类名首字母小写-->
+        <package name="com.qcm.pojo"/>
+    </typeAliases>
+
+    <!--指定运行环境-->
+    <environments default="development">
+        <!--指定数据源-->
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql:///mybatis01?characterEncoding=utf8&amp;useSSL=false"/>
+                <property name="username" value="root"/>
+                <property name="password" value="123"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!--指定映射文件的位置-->
+    <mappers>
+        <!--<mapper resource="UserMapper.xml"/>-->
+        <!--下面的方式真能用在mapper动态代理的开发方式中-->
+        <!--
+            接口文件和映射文件必须在同一个文件夹中
+            Maven在管理项目的时候,在编译的时候,把java目录下的所有java文件编译为字节码文件,拷贝到classpath目录,把resources目录中所有的配置文件拷贝到classpath目录
+            就会导致java目录中的配置文件不会拷贝到classpath目录
+            所以要在pom文件中增加以下一段配置,修改maven编译项目的逻辑
+        -->
+
+        <!--<mapper class="com.qcm.mapper.UserMapper"/>-->
+        <!--
+        下面的这种配置方式,其实是上面配置方式的简写,所以上面配置方式要遵循的规则,下面的方式同样也要遵循
+        -->
+        <package name="com.qcm.mapper"/>
+    </mappers>
+
+</configuration>

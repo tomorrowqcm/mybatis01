@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+    namespace可以理解为Java代码中的包名,用于区分同样ID的SQL语句
+    需要和Mapper接口的类路径一致
+-->
+<mapper namespace="com.qcm.mapper.UserMapper">
+    <!--
+        id : 唯一标识 需要和Mapper接口中的方法名一致
+        resultType : 返回值类型.Config中可以配置将类名首字母小写作为别名替代全限定名
+                     eg:resultType="com.qcm.pojo.User"  改成resultType="user"
+        parameterType : 指定传入进来的参数的数据类型 
+        #{id}: 占位符,{}中的内容可以任意指定,但是有一个前提,传递进来的数据类型必须是简单数据(8中基本数据类型+String)
+    -->
+    <!--查询一个-->
+    <select id="findById" resultType="user" parameterType="integer">
+        SELECT * FROM user WHERE id = #{id}
+    </select>
+    <!--查询多个-->
+    <select id="findByName" resultType="user" parameterType="string">
+        SELECT * FROM user WHERE username LIKE CONCAT('%',#{name},'%')
+    </select>
+    <!--插入-->
+    <insert id="insertUser" parameterType="user">
+        INSERT INTO user (username,birthday,sex,address) VALUES (#{username},#{birthday},#{sex},#{address})
+    </insert>
+    <!--插入并将主键映射到实体类存储-->
+    <!--
+        keyProperty:
+        返回的主键存储在pojo中的哪个属性
+        order：
+        selectKey的执行顺序，是相对与insert语句来说，由于mysql的自增原理执行完insert语句之后才将主键生成，所以这里selectKey的执行顺序为after.
+        resultType:
+        返回的主键是什么类型
+    -->
+    <insert id="insertUser2" parameterType="user">
+        <selectKey keyProperty="id" resultType="integer" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO user (username,birthday,sex,address) VALUES (#{username},#{birthday},#{sex},#{address})
+    </insert>
+    <insert id="insertUser3" parameterType="user" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO user (username,birthday,sex,address) VALUES (#{username},#{birthday},#{sex},#{address})
+    </insert>
+    <insert id="insertUser4" parameterType="user">
+        <selectKey resultType="java.lang.String" order="BEFORE"
+                   keyProperty="id">
+            select uuid()
+        </selectKey>
+        insert into user(id,username,birthday,sex,address)
+        values(#{id},#{username},#{birthday},#{sex},#{address})
+    </insert>
+    <!--删除-->
+    <delete id="deleteById" parameterType="integer">
+        DELETE FROM user where id = #{aa}
+    </delete>
+    <!--修改-->
+    <update id="updateById" parameterType="user">
+        UPDATE user SET username =#{username},birthday = #{birthday} ,sex = #{sex} , address = #{address} WHERE id
+        =#{id}
+    </update>
+
+</mapper>
